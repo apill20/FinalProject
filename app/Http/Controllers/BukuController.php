@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreBukuRequest;
+use App\Http\Requests\UpdateBukuRequest;
 use App\Models\Buku;
 
 class BukuController extends Controller
@@ -104,9 +106,23 @@ class BukuController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBukuRequest $request)
     {
-        // Akan diimplementasi di pertemuan 12 sesuai modul utama
+        try {
+            // Create buku baru dengan validasi data
+            Buku::create($request->validated());
+
+            // Redirect dengan success message
+            return redirect()->route('buku.index')
+            ->with('success', 'Buku berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            // Redirect dengan error message jika gagal
+            return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'Gagal menambahkan buku:'. $e->getMessage());
+        }
+        
     }
 
     /**
@@ -130,9 +146,25 @@ class BukuController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateBukuRequest $request, string $id)
     {
-        // Akan diimplementasi di pertemuan 12 sesuai modul utama
+        try {
+            $buku = Buku::findOrFail($id);
+
+            // Update buku dengan validated data
+            $buku->update($request->validated());
+
+            //Redirect dengan success message
+            return redirect()
+                    ->route('buku.index')
+                    ->with('success', 'Buku berhasil diperbarui!');
+        } catch (\Exception $e) {
+            // Redirect dengan error message jika gagal
+            return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', 'Gagal memperbarui buku:'. $e->getMessage());
+        }
     }
 
     /**
@@ -140,7 +172,23 @@ class BukuController extends Controller
      */
     public function destroy(string $id)
     {
-        // Akan diimplementasi di pertemuan 12 sesuai modul utama
+        try {
+            $buku = Buku::findOrFail($id);
+            $judulBuku = $buku->judul;
+
+            // Delete buku
+            $buku->delete();
+
+            // Redirect dengan success message
+            return redirect()
+                    ->route('buku.index')
+                    ->with('success', "Buku '{$judulBuku}' berhasil dihapus!");
+        } catch (\Exception $e) {
+            // Redirect dengan error message jika gagal
+            return redirect()
+                    ->back()
+                    ->with('error', 'Gagal menghapus buku:'. $e->getMessage());
+        }
     }
     
     /**
@@ -167,5 +215,68 @@ class BukuController extends Controller
             'bukuHabis',
             'kategori'
         ));
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        // Ambil kumpulan ID yang dicentang
+        $ids = $request->buku_ids;
+
+        // Antisipasi jika user langsung klik hapus tanpa mencentang apa pun
+        if (empty($ids)) {
+            return redirect()->back()->with('error', 'Silakan pilih minimal satu buku yang ingin dihapus!');
+        }
+
+        // Eksekusi hapus massal
+        Buku::whereIn('id', $ids)->delete();
+
+        return redirect()->route('buku.index')
+                        ->with('success', count($ids) . ' buku berhasil dihapus sekaligus!');
+    }
+
+    public function export()
+    {
+        // Ambil semua data buku dari database
+        $bukus = Buku::all();
+        
+        // Tentukan nama file unik menggunakan format tanggal dan jam saat ini
+        $filename = 'buku_' . date('Y-m-d_His') . '.csv';
+        
+        // Set bimbingan header HTTP agar browser mengenali ini sebagai download file CSV
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        // Proses pembuatan file CSV secara streaming
+        $callback = function() use ($bukus) {
+            $file = fopen('php://output', 'w');
+            
+            // 1. Membuat Baris Header CSV
+            fputcsv($file, [
+                'Kode Buku', 'Judul', 'Kategori', 'Pengarang', 
+                'Penerbit', 'Tahun', 'ISBN', 'Harga', 'Stok'
+            ]);
+            
+            // 2. Memasukkan Baris Data Buku
+            foreach ($bukus as $buku) {
+                fputcsv($file, [
+                    $buku->kode_buku,
+                    $buku->judul,
+                    $buku->kategori,
+                    $buku->pengarang,
+                    $buku->penerbit,
+                    $buku->tahun_terbit,
+                    $buku->isbn,
+                    $buku->harga,
+                    $buku->stok,
+                ]);
+            }
+            
+            fclose($file);
+        };
+        
+        // Kembalikan respon berupa stream download
+        return response()->stream($callback, 200, $headers);
     }
 }

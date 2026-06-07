@@ -18,6 +18,9 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
+// Jalur untuk mengunduh file CSV data buku
+Route::get('/buku/export', [BukuController::class, 'export'])->name('buku.export');
+
 // Cari Buku
 Route::get('/buku/search', [BukuController::class, 'search'])->name('buku.search');
 
@@ -30,6 +33,10 @@ Route::get('/buku/kategori/{kategori}', [BukuController::class, 'filterKategori'
  
 // Resource route untuk Anggota (akan dibuat nanti)
 Route::resource('anggota', AnggotaController::class);
+
+// Jalur untuk eksekusi hapus massal
+Route::post('/buku/bulk-delete', [BukuController::class, 'bulkDelete'])
+     ->name('buku.bulk-delete');
 
 // Route Default
 // Route::get('/', function () {
