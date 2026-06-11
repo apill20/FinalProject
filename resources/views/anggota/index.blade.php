@@ -8,9 +8,15 @@
         <i class="bi bi-people"></i>
         Daftar Anggota
     </h1>
-    <a href="{{ route('anggota.create') }}" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> Tambah Anggota
-    </a>
+    <div>
+        <a href="{{ route('anggota.create')}}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Tambah Anggota
+        </a>
+
+        <a href="{{ route('anggota.export') }}" class="btn btn-success me-2">
+            <i class="bi bi-download"></i> Export Excel
+        </a>
+    </div>
 </div>
  
 {{-- Statistik --}}
@@ -55,6 +61,62 @@
         </div>
     </div>
 </div>
+
+{{-- FORM ADVANCED SEARCH & FILTER --}}
+<div class="card mb-4 border-0 shadow-sm">
+    <div class="card-body bg-light rounded">
+        <form action="{{ route('anggota.search') }}" method="GET">
+            <div class="row g-2 align-items-center">
+                
+                {{-- Input Pencarian --}}
+                <div class="col-md-3">
+                    <input type="text" name="keyword" class="form-control" 
+                           placeholder="Cari nama/email/telepon" value="{{ request('keyword') }}">
+                </div>
+                
+                {{-- Filter Jenis Kelamin --}}
+                <div class="col-md-2">
+                    <select name="jenis_kelamin" class="form-select">
+                        <option value="">Semua Kelamin</option>
+                        <option value="Laki-laki" {{ request('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="Perempuan" {{ request('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                    </select>
+                </div>
+                
+                {{-- Filter Status --}}
+                <div class="col-md-2">
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                        <option value="Nonaktif" {{ request('status') == 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                    </select>
+                </div>
+                
+                {{-- Filter Pekerjaan --}}
+                <div class="col-md-2">
+                    <select name="pekerjaan" class="form-select">
+                        <option value="">Semua Pekerjaan</option>
+                        <option value="Mahasiswa" {{ request('pekerjaan') == 'Mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
+                        <option value="Pegawai" {{ request('pekerjaan') == 'Pegawai' ? 'selected' : '' }}>Pegawai</option>
+                        <option value="Wiraswasta" {{ request('pekerjaan') == 'Wiraswasta' ? 'selected' : '' }}>Wiraswasta</option>
+                    </select>
+                </div>
+                
+                {{-- Tombol Berjejer Rapi --}}
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">
+                        <i class="bi bi-search"></i> Cari
+                    </button>
+                    <a href="{{ route('anggota.index') }}" class="btn btn-secondary flex-fill">
+                        <i class="bi bi-x"></i> Reset
+                    </a>
+                </div>
+                
+            </div>
+        </form>
+    </div>
+</div>
+
  
 {{-- Tabel Anggota --}}
 <div class="card">

@@ -1,4 +1,4 @@
-# Tugas Pemrograman Web 2 - Pertemuan 12
+# Tugas Pemrograman Web 2 - Pertemuan 13
 
 **Nama:** Ari Maulida Aprilia
 
@@ -6,45 +6,43 @@
 
 ---
 
-## Tugas 1: Validation Rules Advanced (30%)
+## Tugas 1: Auto-Generate Kode Anggota (30%)
 
-Implementasi custom validation rule dan conditional validation untuk memastikan integritas data buku yang diinputkan ke dalam sistem.
+Implementasi fitur pembuatan kode anggota secara otomatis untuk memastikan standarisasi format dan mencegah kesalahan input manual saat pendaftaran anggota baru.
 
-* **Custom Rule Kode Buku:** Format diwajibkan `BK-[Kategori]-[Nomor]` (contoh: BK-PROG-001).
-* **Conditional Validation:** Jika kategori "Programming", maka bahasa wajib "Inggris". Jika tahun terbit < 2000, stok maksimal 5.
-* **Custom Error Message:** Menggunakan bahasa Indonesia yang baik dan benar pada `StoreBukuRequest`.
+* **Format Kode Anggota:** Diwajibkan menggunakan format terstandar `AGT-[TAHUN]-[NOMOR_URUT]` (contoh: `AGT-2026-001`).
+* **Logika Otomatisasi:** Menggunakan *helper function* `generateKodeAnggota()` di `AnggotaController` yang memeriksa nomor urut terakhir pada tahun aktif dan mem-formatnya menggunakan fungsi `str_pad`.
+* **Proteksi Form Input:** Kolom kode anggota dikunci menggunakan atribut `readonly` pada file `create.blade.php` agar admin tidak bisa memanipulasi kode secara manual.
 
-**Bukti Hasil Testing Validasi:**
-![Pesan Error Validasi Stok](ss/p12/error.jpeg)
-
----
-
-## Tugas 2: Bulk Delete Operations (35%)
-
-Penambahan fitur hapus massal (*bulk delete*) menggunakan *checkbox* untuk mempermudah pengelolaan data buku dalam jumlah banyak sekaligus.
-
-* Terintegrasi dengan fitur **Select All** menggunakan JavaScript.
-* Menggunakan method `whereIn('id', $ids)->delete()` pada Controller untuk efisiensi *query* database.
-* Dilengkapi dengan konfirmasi **SweetAlert** agar data tidak tidak sengaja terhapus.
-
-**Bukti Hasil Bulk Delete:**
-![Tampilan Select All Checkbox](ss/p12/popup.png)
-
-**Hasil Delete Berhasil:**
-![Tampilan Select All Checkbox](ss/p12/delete.png)
+**Bukti Hasil Auto-Generate Kode:**
+![Tampilan Form Tambah Anggota](ss/p13/tugas1.jpeg)
 
 ---
 
-## Tugas 3: Export Buku ke CSV (35%)
+## Tugas 2: Export Anggota ke Excel (40%)
 
-Implementasi fitur *export* data untuk mengunduh seluruh rekap data buku dari database ke dalam format *Comma Separated Values* (.csv).
+Implementasi fitur ekspor seluruh rekap data anggota dari database ke dalam format spreadsheet Excel (`.xlsx`) untuk kebutuhan pelaporan administrasi.
 
-* Memanfaatkan fungsi *stream download* bawaan PHP/Laravel (`fputcsv` dan `fopen('php://output', 'w')`).
-* Nama file *export* digenerate secara dinamis menggunakan *timestamp* (contoh: `buku_YYYY-MM-DD_HHMMSS.csv`).
+* **Integrasi Package:** Menggunakan package resmi `maatwebsite/excel` versi terbaru untuk menghasilkan file spreadsheet yang stabil dan kompeten.
+* **Separation of Concerns:** Pembuatan *Export Class* `AnggotaExport` yang mengimplementasikan `FromCollection` untuk seleksi kolom database dan `WithHeadings` untuk penamaan judul kolom yang rapi.
+* **Nama File Dinamis:** File yang diunduh otomatis menggunakan penamaan berbasis waktu *timestamp* (contoh: `anggota_YYYY-MM-DD_HHMMSS.xlsx`).
 
-**Hasil Export CSV:**
+**Bukti Tombol Export di Index:**
+![Tombol Export Excel](ss/p13/excel.png)
 
-![Notifikasi Download CSV](ss/p12/csv.png)
+**Hasil File Excel Anggota:**
+![Hasil Download Excel](ss/p13/download.png)
+![Hasil Download Excel](ss/p13/hslcsv.png)
 
-**Hasil Download CSV:**
-![Hasil Download CSV](ss/p12/hasil_csv.png)
+---
+
+## Tugas 3: Advanced Search & Filter (30%)
+
+Penambahan fitur pencarian lanjutan dan filter spesifik untuk mempermudah pengelolaan serta penelusuran data anggota dalam skala besar.
+
+* **Pencarian Multi-Field:** Mampu mencari anggota berdasarkan kata kunci (*keyword*) yang memeriksa kolom nama, email, dan nomor telepon sekaligus menggunakan klausa `orWhere`.
+* **Filter Dropdown Fleksibel:** Menyediakan filter spesifik berdasarkan jenis kelamin, status keanggotaan (Aktif/Nonaktif), dan kategori pekerjaan (Mahasiswa/Pegawai/Wiraswasta).
+* **Statistik Dinamis:** Angka ringkasan pada kotak statistik otomatis menyesuaikan secara *real-time* berdasarkan hasil data yang sedang disaring oleh pengguna.
+
+**Bukti Hasil Advanced Search & Filter:**
+![Tampilan Form Filter Anggota](ss/p13/search.png)

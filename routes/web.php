@@ -24,19 +24,25 @@ Route::get('/buku/export', [BukuController::class, 'export'])->name('buku.export
 // Cari Buku
 Route::get('/buku/search', [BukuController::class, 'search'])->name('buku.search');
 
-// Resource route untuk Buku
-Route::resource('buku', BukuController::class);
- 
 // Custom route untuk filter kategori
 Route::get('/buku/kategori/{kategori}', [BukuController::class, 'filterKategori'])
      ->name('buku.kategori');
- 
-// Resource route untuk Anggota (akan dibuat nanti)
-Route::resource('anggota', AnggotaController::class);
 
 // Jalur untuk eksekusi hapus massal
 Route::post('/buku/bulk-delete', [BukuController::class, 'bulkDelete'])
      ->name('buku.bulk-delete');
+
+// Resource route untuk Buku
+Route::resource('buku', BukuController::class);
+
+// Jalur untuk mengunduh file Excel data anggota
+Route::get('/anggota/export', [AnggotaController::class, 'export'])->name('anggota.export');
+
+// Jalur untuk Advanced Search Anggota
+Route::get('/anggota/search', [AnggotaController::class, 'search'])->name('anggota.search');
+ 
+// Resource route untuk Anggota (akan dibuat nanti)
+Route::resource('anggota', AnggotaController::class);
 
 // Route Default
 // Route::get('/', function () {
@@ -44,24 +50,24 @@ Route::post('/buku/bulk-delete', [BukuController::class, 'bulkDelete'])
 // });
 
 // Route Test Koneksi Database (Tetap Dipertahankan)
-Route::get('/test-db', function () {
-    try {
-        DB::connection()->getPdo();
-        $dbName = DB::connection()->getDatabaseName();
-        return "Koneksi database berhasil!<br />Database: <strong>{$dbName}</strong>";
-    } catch (\Exception $e) {
-        return "Koneksi database gagal!<br />Error: " . $e->getMessage();
-    }
-});
+// Route::get('/test-db', function () {
+//     try {
+//         DB::connection()->getPdo();
+//         $dbName = DB::connection()->getDatabaseName();
+//         return "Koneksi database berhasil!<br />Database: <strong>{$dbName}</strong>";
+//     } catch (\Exception $e) {
+//         return "Koneksi database gagal!<br />Error: " . $e->getMessage();
+//     }
+// });
 
 // Route Utility Sederhana (Opsional)
-Route::get('/hello', function () {
-    return 'Hello dari Laravel!';
-});
+// Route::get('/hello', function () {
+//     return 'Hello dari Laravel!';
+// });
 
-Route::get('/info', function () {
-    return '<h1>Sistem Perpustakaan</h1><p>Selamat datang!</p>';
-});
+// Route::get('/info', function () {
+//     return '<h1>Sistem Perpustakaan</h1><p>Selamat datang!</p>';
+// });
 
 
 //  TESTING BUKU (Versi Upgrade Database - Praktikum 8)

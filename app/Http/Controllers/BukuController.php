@@ -231,7 +231,7 @@ class BukuController extends Controller
         Buku::whereIn('id', $ids)->delete();
 
         return redirect()->route('buku.index')
-                        ->with('success', count($ids) . ' buku berhasil dihapus sekaligus!');
+                        ->with('success', count($ids) . ' buku berhasil dihapus!');
     }
 
     public function export()
