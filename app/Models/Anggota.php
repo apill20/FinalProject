@@ -102,4 +102,10 @@ class Anggota extends Model
         return $query->whereMonth('created_at', now()->month)
                      ->whereYear('created_at', now()->year);
     }
+
+    // Tambahkan method ini di class Anggota
+    public function transaksis()
+    {
+        return $this->hasMany(Transaksi::class);
+    }
 }
