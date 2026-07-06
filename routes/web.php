@@ -17,15 +17,9 @@ Route::get('/', function () {
     // Protected routes (dengan auth middleware)
     Route::middleware(['auth'])->group(function () {
 
-    // Dashboard
-    // Route::get('/dashboard', function () {
-    //     return view('dashboard');
-    // })->name('dashboard');
 
-    // Gantikan semua Route::get('/dashboard')
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
