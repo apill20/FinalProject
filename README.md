@@ -68,7 +68,7 @@ Sistem Informasi Perpustakaan berbasis **Laravel 13** yang digunakan untuk menge
 ## 1. Register
 Menampilkan Halaman Register 
 
-> ![Halaman Register](ss/final/register.jpeg)
+> ![Halaman Register](ss/final/register.png)
 
 ---
 
