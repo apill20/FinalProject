@@ -6,7 +6,8 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                        <span class="ml-2 text-xl font-bold text-gray-800">Perpustakaan</span>
+                        {{-- //perpustakaan --}}
+                        <span class="ml-2 text-xl font-bold text-gray-800"></span> 
                     </a>
                 </div>
  
@@ -24,7 +25,22 @@
                     <x-nav-link :href="route('transaksi.index')" :active="request()->routeIs('transaksi.*')">
                         {{ __('Transaksi') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">
+                        {{ __('Laporan') }}
+                    </x-nav-link>
                 </div>
+            </div>
+
+            <!-- Form Search Global -->
+            <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <form action="{{ route('search') }}" method="GET" class="relative">
+                    <input type="text" name="q" placeholder="Cari buku, anggota..." value="{{ request('q') }}" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block w-64 pl-10 text-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </div>
+                </form>
             </div>
  
             <!-- Settings Dropdown -->
@@ -87,6 +103,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('transaksi.index')" :active="request()->routeIs('transaksi.*')">
                 {{ __('Transaksi') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">
+                {{ __('Laporan') }}
             </x-responsive-nav-link>
         </div>
  

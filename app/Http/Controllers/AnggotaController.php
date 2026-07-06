@@ -122,8 +122,6 @@ class AnggotaController extends Controller
         $anggota = Anggota::findOrFail($id);
         return view('anggota.show', compact('anggota'));
     }
- 
-    // Methods lainnya akan diimplementasi di pertemuan 13
 
     /**
      * Show the form for creating a new resource.

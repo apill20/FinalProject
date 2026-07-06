@@ -78,7 +78,7 @@
                                     @if($transaksi->status == 'Dikembalikan')
                                         <tr>
                                             <td class="fw-bold text-muted">Tanggal Dikembalikan</td>
-                                            <td>: <i class="bi bi-calendar-check text-success"></i> {{ \Carbon\Carbon::parse($transaksi->tanggal_dikembalikan)->format('d M Y H:i') }}</td>
+                                            <td>: <i class="bi bi-calendar-check text-success"></i> {{ \Carbon\Carbon::parse($transaksi->tanggal_dikembalikan)->format('d M Y') }}</td>
                                         </tr>
                                         <tr>
                                             <td class="fw-bold text-muted">Denda Keterlambatan</td>
@@ -91,7 +91,6 @@
                                             </td>
                                         </tr>
                                     @endif
-
                                     <tr>
                                         <td class="fw-bold text-muted">Keterangan</td>
                                         <td>: {{ $transaksi->keterangan ?? '-' }}</td>
@@ -123,19 +122,32 @@
                             </div>
                         </div>
 
-                        {{-- Card Tombol Aksi --}}
+                    {{-- Card Tombol Aksi --}}
                         <div class="card shadow-sm">
                             <div class="card-body d-grid gap-2">
                                 
-                                {{-- Menggunakan Metode PUT agar sinkron dengan web.php --}}
-                                @if($transaksi->status == 'Dipinjam')
-                                    <form action="{{ route('transaksi.kembalikan', $transaksi->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memproses pengembalian buku ini?')">
+                                @if($transaksi->status === 'Dipinjam')
+                                    <button type="button" class="btn btn-success" id="btn-kembalikan">
+                                        <i class="bi bi-arrow-return-left"></i> Kembalikan Buku
+                                    </button>
+                                
+                                    <form id="form-kembalikan" action="{{ route('transaksi.kembalikan', $transaksi->id) }}" method="POST" class="d-none">
                                         @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-success w-100 py-2">
-                                            <i class="bi bi-arrow-counterclockwise"></i> Kembalikan Buku
-                                        </button>
+                                        @method('PUT') 
                                     </form>
+                                @else
+                                    
+                                    @if(\Carbon\Carbon::parse($transaksi->tanggal_dikembalikan)->startOfDay() <= \Carbon\Carbon::parse($transaksi->tanggal_kembali)->startOfDay())
+                                        <div class="alert alert-success text-start mb-3">
+                                            <i class="bi bi-check-circle"></i> Dikembalikan tepat waktu pada
+                                            <strong>{{ \Carbon\Carbon::parse($transaksi->tanggal_dikembalikan)->format('d M Y') }}</strong>
+                                        </div>
+                                    @else
+                                        <div class="alert alert-warning text-start mb-3">
+                                            <i class="bi bi-exclamation-triangle"></i> Terlambat dikembalikan! <br>
+                                            <strong>Denda: Rp {{ number_format($transaksi->denda, 0, ',', '.') }}</strong>
+                                        </div>
+                                    @endif
                                 @endif
 
                                 <a href="{{ route('transaksi.index') }}" class="btn btn-outline-primary py-2">
@@ -145,8 +157,28 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
+
+    {{-- SweetAlert2 Script --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById('btn-kembalikan')?.addEventListener('click', function() {
+        Swal.fire({
+            title: 'Konfirmasi Pengembalian',
+            text: 'Apakah Anda yakin ingin mengembalikan buku ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#198754',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Kembalikan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-kembalikan').submit();
+            }
+        });
+    });
+    </script>
 </x-app-layout>

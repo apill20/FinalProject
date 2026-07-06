@@ -12,15 +12,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>
-                        <i class="bi bi-arrow-left-right"></i>
-                        Daftar Transaksi Peminjaman
-                    </h1>
+                <div class="d-flex justify-content-end align-items-center mb-4">
                     <div>
-                        <a href="{{ route('transaksi.laporan') }}" class="btn btn-info text-white me-2">
+                        {{-- <a href="{{ route('laporan.index') }}" class="btn btn-info text-white me-2">
                             <i class="bi bi-file-earmark-bar-graph"></i> Lihat Laporan
-                        </a>
+                        </a> --}}
                         <a href="{{ route('transaksi.create') }}" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i> Pinjam Buku
                         </a>
@@ -37,26 +33,40 @@
                 {{-- Statistik --}}
                 <div class="row mb-4">
                     <div class="col-md-4">
-                        <div class="card border-primary">
-                            <div class="card-body">
-                                <h6 class="text-muted">Total Transaksi</h6>
-                                <h2>{{ $transaksis->count() }}</h2>
+                        <div class="card border-primary h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Total Transaksi</h6>
+                                    <h2 class="mb-0">{{ $transaksis->count() }}</h2>
+                                </div>
+
+                                <i class="bi bi-arrow-left-right text-primary" style="font-size: 3rem;"></i>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-4">
-                        <div class="card border-warning">
-                            <div class="card-body">
-                                <h6 class="text-muted">Sedang Dipinjam</h6>
-                                <h2>{{ $transaksis->where('status', 'Dipinjam')->count() }}</h2>
+                        <div class="card border-warning h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Sedang Dipinjam</h6>
+                                    <h2 class="mb-0">{{ $transaksis->where('status','Dipinjam')->count() }}</h2>
+                                </div>
+
+                                <i class="bi bi-book-half text-warning" style="font-size: 3rem;"></i>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-4">
-                        <div class="card border-success">
-                            <div class="card-body">
-                                <h6 class="text-muted">Sudah Dikembalikan</h6>
-                                <h2>{{ $transaksis->where('status', 'Dikembalikan')->count() }}</h2>
+                        <div class="card border-success h-100">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-2">Sudah Dikembalikan</h6>
+                                    <h2 class="mb-0">{{ $transaksis->where('status','Dikembalikan')->count() }}</h2>
+                                </div>
+
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
                             </div>
                         </div>
                     </div>

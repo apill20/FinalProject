@@ -9,11 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>
-                        <i class="bi bi-book"></i>
-                        Daftar Buku
-                    </h1>
+                <div class="d-flex justify-content-end align-items-center mb-4">
                     <div>
                         <a href="{{ route('buku.create')}}" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i> Tambah Buku
@@ -24,6 +20,22 @@
                         </a>
                     </div>
                 </div>
+
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
 
                 {{-- Statistik Cards --}}
                 <div class="row mb-4">
@@ -77,54 +89,75 @@
                 </div>
 
                 {{-- FORM PENCARIAN ADVANCED --}}
-                <div class="card mb-4 shadow-sm border-0 bg-light">
-                    <div class="card-body">
-                        <form action="{{ route('buku.search') }}" method="GET" class="row g-2 align-items-center">
-                            <div class="col-md-4">
-                                <input type="text" name="keyword" class="form-control" placeholder="Cari judul, pengarang, penerbit..." value="{{ request('keyword') }}">
-                            </div>
-                            <div class="col-md-3">
-                                <select name="kategori" class="form-select">
-                                    <option value="">Semua Kategori</option>
-                                    @foreach($kategoris as $kat)
-                                        <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>{{ $kat }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select name="tahun" class="form-select">
-                                    <option value="">Semua Tahun</option>
-                                    @foreach($tahuns as $thn)
-                                        <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>{{ $thn }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select name="ketersediaan" class="form-select">
-                                    <option value="">Status Stok</option>
-                                    <option value="Tersedia" {{ request('ketersediaan') == 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
-                                    <option value="Habis" {{ request('ketersediaan') == 'Habis' ? 'selected' : '' }}>Habis</option>
-                                </select>
-                            </div>
-                            <div class="col-md-1 d-grid">
-                                <button type="submit" class="btn btn-success"><i class="bi bi-search"></i></button>
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-body bg-light rounded">
+                        <form action="{{ route('buku.search') }}" method="GET">
+                            <div class="row g-3 align-items-end">
+
+                                <div class="col-md-3">
+                                    <label class="form-label small">Keyword</label>
+                                    <input type="text"
+                                        name="keyword"
+                                        class="form-control"
+                                        placeholder="Cari judul, pengarang, penerbit..."
+                                        value="{{ request('keyword') }}">
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label small">Kategori</label>
+                                    <select name="kategori" class="form-select">
+                                        <option value="">Semua Kategori</option>
+                                        @foreach($kategoris as $kat)
+                                            <option value="{{ $kat }}" {{ request('kategori') == $kat ? 'selected' : '' }}>
+                                                {{ $kat }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label small">Tahun</label>
+                                    <select name="tahun" class="form-select">
+                                        <option value="">Semua Tahun</option>
+                                        @foreach($tahuns as $thn)
+                                            <option value="{{ $thn }}" {{ request('tahun') == $thn ? 'selected' : '' }}>
+                                                {{ $thn }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label class="form-label small">Ketersediaan</label>
+                                    <select name="ketersediaan" class="form-select">
+                                        <option value="">Status Stok</option>
+                                        <option value="Tersedia" {{ request('ketersediaan') == 'Tersedia' ? 'selected' : '' }}>
+                                            Tersedia
+                                        </option>
+                                        <option value="Habis" {{ request('ketersediaan') == 'Habis' ? 'selected' : '' }}>
+                                            Habis
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3 d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary flex-fill">
+                                        <i class="bi bi-search"></i> Cari
+                                    </button>
+
+                                    <a href="{{ route('buku.index') }}"
+                                    class="btn btn-secondary flex-fill">
+                                        <i class="bi bi-x-circle"></i> Reset
+                                    </a>
+                                </div>
+
                             </div>
                         </form>
                     </div>
                 </div>
 
-                @if(request()->has('keyword') || request()->has('kategori') || request()->has('tahun') || request()->has('ketersediaan') || isset($kategori))
-                    <div class="alert alert-info mb-4 d-flex justify-content-between align-items-center">
-                        <div>
-                            <i class="bi bi-info-circle"></i> Menampilkan hasil pencarian.
-                            @isset($kategori) untuk kategori <strong>{{ $kategori }}</strong> @endisset
-                        </div>
-                        <a href="{{ route('buku.index') }}" class="btn btn-sm btn-outline-info">Reset Filter</a>
-                    </div>
-                @endif
-
-                {{-- FORM UNTUK BULK DELETE DIMULAI DARI SINI
-                <form action="{{ route('buku.bulk-delete') }}" method="POST" id="form-bulk-delete">
+                {{-- FORM UNTUK BULK DELETE DIMULAI DARI SINI --}}
+                <form action="{{ route('buku.bulk.delete') }}" method="POST" id="form-bulk-delete">
                     @csrf
 
                     {{-- Toolbar Bulk Delete --}}
@@ -230,7 +263,6 @@
     </div>
 </x-app-layout>
 
-@push('scripts')
 <script>
     // 1. Logika untuk Select All
     const selectAllCheckbox = document.getElementById('select-all');
@@ -244,9 +276,12 @@
 
     // 2. SweetAlert Hapus Massal
     const btnHapusMassal = document.getElementById('btn-hapus-massal');
+    console.log("BTN =", btnHapusMassal);
     if (btnHapusMassal) {
         btnHapusMassal.addEventListener('click', function() {
+            console.log("DIKLIK");
             const checkedBoxes = document.querySelectorAll('.buku-checkbox:checked');
+            console.log("Jumlah:", checkedBoxes.length);
             if (checkedBoxes.length === 0) {
                 Swal.fire({ icon: 'warning', title: 'Oops...', text: 'Silakan pilih minimal satu buku!' });
                 return;
@@ -297,4 +332,3 @@
         });
     });
 </script>
-@endpush

@@ -154,9 +154,10 @@
                                 </a>
                                 
                                 @if ($buku->stok > 0)
-                                    <button class="btn btn-success">
+                                    <a href="{{ route('transaksi.create', ['buku' => $buku->id]) }}"
+                                    class="btn btn-success">
                                         <i class="bi bi-cart-plus"></i> Pinjam Buku
-                                    </button>
+                                    </a>
                                 @else
                                     <button class="btn btn-secondary" disabled>
                                         <i class="bi bi-x-circle"></i> Stok Habis

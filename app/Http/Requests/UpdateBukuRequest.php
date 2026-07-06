@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\KodeBukuFormat;
+use Illuminate\Validation\Rule;
 
 class UpdateBukuRequest extends FormRequest
 {
@@ -32,9 +34,19 @@ class UpdateBukuRequest extends FormRequest
             'tahun_terbit' => 'required|integer|min:1900|max:' . date('Y'),
             'isbn' => 'nullable|string|max:20',
             'harga' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
+            'stok' => [
+                'required',
+                'integer',
+                'min:0',
+                Rule::when($this->input('tahun_terbit') < 2000, 'max:5'),
+            ],
             'deskripsi' => 'nullable|string',
-            'bahasa' => 'required|string|max:20',
+                'bahasa' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::when($this->input('kategori') == 'Programming', 'in:Inggris'),
+            ],
         ];
     }
 
@@ -48,6 +60,8 @@ class UpdateBukuRequest extends FormRequest
                 'harga.required' => 'Harga buku wajib diisi.',
                 'harga.numeric' => 'Harga harus berupa angka.',
                 'stok.integer' => 'Stok harus berupa angka bulat.',
+                'stok.max' => 'Buku terbitan sebelum tahun 2000 maksimal stoknya adalah 5.',
+                'bahasa.in' => 'Khusus kategori Programming, bahasa buku harus "Inggris".',
             ];
     }
 }

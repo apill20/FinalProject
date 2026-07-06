@@ -12,11 +12,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>
-                        <i class="bi bi-people"></i>
-                        Daftar Anggota
-                    </h1>
+                <div class="d-flex justify-content-end align-items-center mb-4">
                     <div>
                         <a href="{{ route('anggota.create')}}" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i> Tambah Anggota
@@ -88,47 +84,83 @@
                 <div class="card mb-4 border-0 shadow-sm">
                     <div class="card-body bg-light rounded">
                         <form action="{{ route('anggota.search') }}" method="GET">
-                            <div class="row g-2 align-items-center">
-                                
+                            <div class="row g-3 align-items-end">
+
+                                {{-- Keyword --}}
                                 <div class="col-md-3">
-                                    <input type="text" name="keyword" class="form-control" 
-                                           placeholder="Cari nama/email/telepon" value="{{ request('keyword') }}">
+                                    <label class="form-label small">Keyword</label>
+                                    <input
+                                        type="text"
+                                        name="keyword"
+                                        class="form-control"
+                                        placeholder="Cari nama, email, telepon..."
+                                        value="{{ request('keyword') }}">
                                 </div>
-                                
+
+                                {{-- Jenis Kelamin --}}
                                 <div class="col-md-2">
+                                    <label class="form-label small">Jenis Kelamin</label>
                                     <select name="jenis_kelamin" class="form-select">
                                         <option value="">Semua Kelamin</option>
-                                        <option value="Laki-laki" {{ request('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                                        <option value="Perempuan" {{ request('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                        <option value="Laki-laki"
+                                            {{ request('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>
+                                            Laki-laki
+                                        </option>
+                                        <option value="Perempuan"
+                                            {{ request('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>
+                                            Perempuan
+                                        </option>
                                     </select>
                                 </div>
-                                
+
+                                {{-- Status --}}
                                 <div class="col-md-2">
+                                    <label class="form-label small">Status</label>
                                     <select name="status" class="form-select">
                                         <option value="">Semua Status</option>
-                                        <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                                        <option value="Nonaktif" {{ request('status') == 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                        <option value="Aktif"
+                                            {{ request('status') == 'Aktif' ? 'selected' : '' }}>
+                                            Aktif
+                                        </option>
+                                        <option value="Nonaktif"
+                                            {{ request('status') == 'Nonaktif' ? 'selected' : '' }}>
+                                            Nonaktif
+                                        </option>
                                     </select>
                                 </div>
-                                
+
+                                {{-- Pekerjaan --}}
                                 <div class="col-md-2">
+                                    <label class="form-label small">Pekerjaan</label>
                                     <select name="pekerjaan" class="form-select">
                                         <option value="">Semua Pekerjaan</option>
-                                        <option value="Mahasiswa" {{ request('pekerjaan') == 'Mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
-                                        <option value="Pegawai" {{ request('pekerjaan') == 'Pegawai' ? 'selected' : '' }}>Pegawai</option>
-                                        <option value="Wiraswasta" {{ request('pekerjaan') == 'Wiraswasta' ? 'selected' : '' }}>Wiraswasta</option>
+                                        <option value="Mahasiswa"
+                                            {{ request('pekerjaan') == 'Mahasiswa' ? 'selected' : '' }}>
+                                            Mahasiswa
+                                        </option>
+                                        <option value="Pegawai"
+                                            {{ request('pekerjaan') == 'Pegawai' ? 'selected' : '' }}>
+                                            Pegawai
+                                        </option>
+                                        <option value="Wiraswasta"
+                                            {{ request('pekerjaan') == 'Wiraswasta' ? 'selected' : '' }}>
+                                            Wiraswasta
+                                        </option>
                                     </select>
                                 </div>
-                                
+
+                                {{-- Tombol --}}
                                 <div class="col-md-3 d-flex gap-2">
                                     <button type="submit" class="btn btn-primary flex-fill">
                                         <i class="bi bi-search"></i> Cari
                                     </button>
-                                    <a href="{{ route('anggota.index') }}" class="btn btn-secondary flex-fill">
-                                        <i class="bi bi-x"></i> Reset
+
+                                    <a href="{{ route('anggota.index') }}"
+                                    class="btn btn-secondary flex-fill">
+                                        <i class="bi bi-x-circle"></i> Reset
                                     </a>
                                 </div>
-                                
+
                             </div>
                         </form>
                     </div>
@@ -138,7 +170,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover ">
                                 <thead class="table-light">
                                     <tr>
                                         <th>No</th>
@@ -162,36 +194,26 @@
                                                 <strong>{{ $anggota->nama }}</strong>
                                             </td>
                                             <td>
-                                                <i class="bi bi-envelope"></i>
                                                 {{ $anggota->email }}
                                             </td>
                                             <td>
-                                                <i class="bi bi-telephone"></i>
                                                 {{ $anggota->telepon }}
                                             </td>
                                             <td>
-                                                @if ($anggota->jenis_kelamin == 'Laki-laki')
-                                                    <i class="bi bi-gender-male text-primary"></i>
-                                                @else
-                                                    <i class="bi bi-gender-female text-danger"></i>
-                                                @endif
                                                 {{ $anggota->jenis_kelamin }}
                                             </td>
                                             <td>
                                                 @if ($anggota->status == 'Aktif')
-                                                    <span class="badge bg-success">
-                                                        <i class="bi bi-check-circle"></i> Aktif
-                                                    </span>
+                                                    <span class="badge bg-success">Aktif</span>
                                                 @else
-                                                    <span class="badge bg-secondary">
-                                                        <i class="bi bi-x-circle"></i> Nonaktif
-                                                    </span>
+                                                    <span class="badge bg-secondary">Nonaktif</span>
                                                 @endif
                                             </td>
+                                            </td>
                                             <td>
-                                                <div class="btn-group" role="group">
+                                                <div class="d-flex gap-1 justify-content-center" role="group">
                                                     <a href="{{ route('anggota.show', $anggota->id) }}" 
-                                                       class="btn btn-sm btn-info text-white"
+                                                       class="btn btn-info btn-sm text-white"
                                                        title="Detail">
                                                         <i class="bi bi-eye"></i>
                                                     </a>

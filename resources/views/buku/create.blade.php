@@ -36,7 +36,7 @@
                                                    id="kode_buku" 
                                                    class="form-control @error('kode_buku') is-invalid @enderror"
                                                    value="{{ old('kode_buku') }}"
-                                                   placeholder="Contoh: BK-001">
+                                                   placeholder="Contoh: BK-PROG-001">
                                             @error('kode_buku')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror

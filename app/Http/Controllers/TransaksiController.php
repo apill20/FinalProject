@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
  
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Transaksi;
 use App\Models\Buku;
 use App\Models\Anggota;
@@ -110,6 +109,9 @@ class TransaksiController extends Controller
         try {
             DB::transaction(function () use ($id) {
                 $transaksi = Transaksi::findOrFail($id);
+                if ($transaksi->status === 'Dikembalikan') {
+                    throw new \Exception('Buku sudah dikembalikan sebelumnya.');
+                }
                 
                 // 1. Update transaksi
                 $tanggalDikembalikan = now();
@@ -155,104 +157,18 @@ class TransaksiController extends Controller
      * Hitung denda keterlambatan.
      */
     private function hitungDenda($transaksi, $tanggalDikembalikan)
-    {
-        $hariTerlambat = $transaksi->tanggal_kembali->diffInDays($tanggalDikembalikan, false);
-        
-        if ($hariTerlambat > 0) {
-            // Denda Rp 5.000 per hari
-            return $hariTerlambat * 5000;
-        }
-        
-        return 0;
-    }
-
-    /**
-     * Menampilkan halaman laporan transaksi.
-     */
-    public function laporan(Request $request)
-    {
-        $anggotas = Anggota::orderBy('nama')->get();
-        $query = Transaksi::with(['anggota', 'buku']);
-
-        // Filter Tanggal Pinjam (Dari - Sampai)
-        if ($request->filled('dari_tanggal') && $request->filled('sampai_tanggal')) {
-            $query->whereBetween('tanggal_pinjam', [$request->dari_tanggal, $request->sampai_tanggal]);
-        }
-        
-        // Filter Status
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        
-        // Filter Anggota
-        if ($request->filled('anggota_id')) {
-            $query->where('anggota_id', $request->anggota_id);
-        }
-
-        $transaksis = $query->latest()->get();
-        $totalTransaksi = $transaksis->count();
-        $totalDenda = $transaksis->sum(function ($trx) {
-            // Jika sudah dikembalikan, ambil denda dari database
-            if ($trx->status == 'Dikembalikan') {
-                return $trx->denda ?? 0;
-            }
+        {
+            // Gunakan startOfDay() agar perhitungan hanya berdasarkan tanggal (bukan jam/detik)
+            $batas = \Carbon\Carbon::parse($transaksi->tanggal_kembali)->startOfDay();
+            $kembali = \Carbon\Carbon::parse($tanggalDikembalikan)->startOfDay();
             
-            // Jika masih dipinjam, hitung denda berjalan (jika terlambat)
-            $batas = \Carbon\Carbon::parse($trx->tanggal_kembali)->startOfDay();
-            $sekarang = \Carbon\Carbon::now()->startOfDay();
+            $hariTerlambat = $batas->diffInDays($kembali, false);
             
-            if ($batas->isPast() && $sekarang->greaterThan($batas)) {
-                return $batas->diffInDays($sekarang) * 5000;
+            if ($hariTerlambat > 0) {
+                // Denda Rp 5.000 per hari (dikalikan integer agar hasilnya bulat)
+                return (int)$hariTerlambat * 5000;
             }
             
             return 0;
-        });
-
-        return view('transaksi.laporan', compact('transaksis', 'anggotas', 'totalTransaksi', 'totalDenda'));
-    }
-
-    /**
-     * Export laporan ke format PDF.
-     */
-    public function exportPdf(Request $request)
-    {
-        $query = Transaksi::with(['anggota', 'buku']);
-
-        if ($request->filled('dari_tanggal') && $request->filled('sampai_tanggal')) {
-            $query->whereBetween('tanggal_pinjam', [$request->dari_tanggal, $request->sampai_tanggal]);
         }
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('anggota_id')) {
-            $query->where('anggota_id', $request->anggota_id);
-        }
-
-        $transaksis = $query->latest()->get();
-        $totalTransaksi = $transaksis->count();
-        $totalDenda = $transaksis->sum(function ($trx) {
-            // Jika sudah dikembalikan, ambil denda dari database
-            if ($trx->status == 'Dikembalikan') {
-                return $trx->denda ?? 0;
-            }
-            
-            // Jika masih dipinjam, hitung denda berjalan (jika terlambat)
-            $batas = \Carbon\Carbon::parse($trx->tanggal_kembali)->startOfDay();
-            $sekarang = \Carbon\Carbon::now()->startOfDay();
-            
-            if ($batas->isPast() && $sekarang->greaterThan($batas)) {
-                return $batas->diffInDays($sekarang) * 5000;
-            }
-            
-            return 0;
-        });
-
-        // Render PDF
-        $pdf = Pdf::loadView('transaksi.pdf', compact('transaksis', 'totalTransaksi', 'totalDenda'));
-        
-        // Setting kertas Landscape agar tabel tidak terpotong
-        $pdf->setPaper('A4', 'landscape'); 
-        
-        return $pdf->download('laporan-transaksi-perpustakaan.pdf');
-    }
 }
