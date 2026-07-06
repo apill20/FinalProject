@@ -104,7 +104,7 @@ Pengguna dapat menambah, mengubah, menghapus, mencari, memfilter, melakukan bulk
 ![Form Tambah Buku](ss/final/formTambahBuku.jpeg)
 
 > Halaman Detail Buku
-![Detail Buku](ss/final/detailBuku%20(2).jpeg)
+![Detail Buku](ss/final/detailBuku-2.jpeg)
 
 > Update Form Buku
 ![Update Form Buku](ss/final/updateForm.jpeg)
