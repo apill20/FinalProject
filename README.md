@@ -1,4 +1,4 @@
-# Tugas Pemrograman Web 2 - Pertemuan 14
+# Tugas Pemrograman Web 2
 
 **Nama:** Ari Maulida Aprilia
 
